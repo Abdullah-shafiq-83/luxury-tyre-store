@@ -226,11 +226,11 @@
 
 .tyre-smoke {
   position: absolute;
-  /* Shifted left to sit beneath the tyre's new centred position */
-  left: clamp(48%, 58vw, 66%);
-  bottom: clamp(14%, 18vh, 22%);
+  /* Canvas is now the right column — smoke sits under the tyre centre  */
+  left: 42%;
+  bottom: 16%;
   z-index: 0;
-  width: min(26vw, 400px);
+  width: min(60%, 380px);
   height: 150px;
   opacity: 0;
   filter: blur(0.2px);

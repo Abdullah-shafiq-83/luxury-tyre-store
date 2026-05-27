@@ -9,12 +9,13 @@ const prefersReducedMotion = () =>
 const easeOutQuart = (value: number) => 1 - Math.pow(1 - value, 4);
 const settledYaw = -0.42;
 const settledPitch = 0.08;
-// Reduced startX / stopX so the tyre lands in the right-center of the
-// viewport instead of the far-right edge. Also lowered stopY slightly
-// to sit closer to the vertical centre of the hero.
-const startX = 5.2;
-const stopX = 1.55;
-const stopY = 0.42;
+// The canvas is now contained inside the right column of a 2-col grid,
+// so stopX is relative to THAT column's centre — not the full viewport.
+// stopX=0.2  → tyre sits just right of centre in its own column.
+// startX=4.5 → starts off the right edge of the column for the intro animation.
+const startX = 4.5;
+const stopX = 0.2;
+const stopY = 0.22;
 
 export function TyreHeroCanvas() {
   const mountRef = useRef<HTMLDivElement | null>(null);
@@ -70,9 +71,9 @@ export function TyreHeroCanvas() {
         const size = box.getSize(new THREE.Vector3());
         const center = box.getCenter(new THREE.Vector3());
         const maxAxis = Math.max(size.x, size.y, size.z) || 1;
-        // Reduced from 2.9 → 2.5 so the tyre is proportionate to the hero
-        // and stays fully visible within the viewport on all screen sizes.
-        const scale = 2.5 / maxAxis;
+        // Scale relative to the right column (which is ~50 % of the page).
+        // 2.2 fills the column nicely without overflowing at any aspect ratio.
+        const scale = 2.2 / maxAxis;
 
         model.position.sub(center);
         model.scale.setScalar(scale);
