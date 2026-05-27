@@ -174,10 +174,10 @@ function ProductForm({ product, categories, onDone }: { product: any; categories
 
   return (
     <form onSubmit={save} className="space-y-4">
-      <div className="grid grid-cols-2 gap-4">
-        <div className="col-span-2"><Label>Title</Label><Input required value={form.title} onChange={(e) => setForm({ ...form, title: e.target.value })} /></div>
-        <div className="col-span-2"><Label>Short description</Label><Input value={form.short_description ?? ""} onChange={(e) => setForm({ ...form, short_description: e.target.value })} /></div>
-        <div className="col-span-2"><Label>Description</Label><Textarea rows={4} value={form.description ?? ""} onChange={(e) => setForm({ ...form, description: e.target.value })} /></div>
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+        <div className="sm:col-span-2"><Label>Title</Label><Input required value={form.title} onChange={(e) => setForm({ ...form, title: e.target.value })} /></div>
+        <div className="sm:col-span-2"><Label>Short description</Label><Input value={form.short_description ?? ""} onChange={(e) => setForm({ ...form, short_description: e.target.value })} /></div>
+        <div className="sm:col-span-2"><Label>Description</Label><Textarea rows={4} value={form.description ?? ""} onChange={(e) => setForm({ ...form, description: e.target.value })} /></div>
         <div><Label>Price</Label><Input type="number" step="0.01" required value={form.price} onChange={(e) => setForm({ ...form, price: e.target.value })} /></div>
         <div><Label>Discount price</Label><Input type="number" step="0.01" value={form.discount_price ?? ""} onChange={(e) => setForm({ ...form, discount_price: e.target.value || null })} /></div>
         <div><Label>Stock</Label><Input type="number" value={form.stock} onChange={(e) => setForm({ ...form, stock: e.target.value })} /></div>
