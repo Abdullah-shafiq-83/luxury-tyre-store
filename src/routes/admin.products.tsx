@@ -184,7 +184,7 @@ function ProductForm({ product, categories, onDone }: { product: any; categories
         <div><Label>SKU</Label><Input value={form.sku ?? ""} onChange={(e) => setForm({ ...form, sku: e.target.value })} /></div>
         <div><Label>Brand</Label><Input value={form.brand ?? ""} onChange={(e) => setForm({ ...form, brand: e.target.value })} placeholder="Michelin, BBS…" /></div>
         <div><Label>Size</Label><Input value={form.size ?? ""} onChange={(e) => setForm({ ...form, size: e.target.value })} placeholder='19", 245/40R19…' /></div>
-        <div className="col-span-2"><Label>Category</Label>
+        <div className="sm:col-span-2"><Label>Category</Label>
           <Select value={form.category_id ?? "none"} onValueChange={(v) => setForm({ ...form, category_id: v === "none" ? null : v })}>
             <SelectTrigger><SelectValue placeholder="Select category" /></SelectTrigger>
             <SelectContent>
@@ -193,9 +193,9 @@ function ProductForm({ product, categories, onDone }: { product: any; categories
             </SelectContent>
           </Select>
         </div>
-        <div className="col-span-2"><Label>Tags (comma-separated)</Label><Input value={tagsStr} onChange={(e) => setTagsStr(e.target.value)} /></div>
-        <div className="col-span-2"><Label>Variants (JSON array, e.g. [{`{"size":"19\""},{"color":"black"}`}])</Label><Textarea rows={3} value={variantsStr} onChange={(e) => setVariantsStr(e.target.value)} className="font-mono text-xs" /></div>
-        <div className="col-span-2 grid grid-cols-2 gap-3">
+        <div className="sm:col-span-2"><Label>Tags (comma-separated)</Label><Input value={tagsStr} onChange={(e) => setTagsStr(e.target.value)} /></div>
+        <div className="sm:col-span-2"><Label>Variants (JSON array, e.g. [{`{"size":"19\""},{"color":"black"}`}])</Label><Textarea rows={3} value={variantsStr} onChange={(e) => setVariantsStr(e.target.value)} className="font-mono text-xs" /></div>
+        <div className="sm:col-span-2 grid grid-cols-1 sm:grid-cols-2 gap-3">
           {[
             ["is_featured", "Featured"], ["is_best_seller", "Best seller"],
             ["is_new_arrival", "New arrival"], ["is_visible", "Visible"],
@@ -206,7 +206,7 @@ function ProductForm({ product, categories, onDone }: { product: any; categories
             </label>
           ))}
         </div>
-        <div className="col-span-2 space-y-2">
+        <div className="sm:col-span-2 space-y-2">
           <Label>Images</Label>
           <label className="flex flex-col items-center justify-center border-2 border-dashed border-border/60 rounded-lg py-6 cursor-pointer hover:border-primary/60 hover:bg-card/40 transition">
             <Upload className="w-6 h-6 text-muted-foreground mb-2" />
