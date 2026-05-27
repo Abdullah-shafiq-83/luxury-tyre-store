@@ -226,10 +226,11 @@
 
 .tyre-smoke {
   position: absolute;
-  left: clamp(58%, 66vw, 74%);
-  bottom: clamp(18%, 22vh, 26%);
+  /* Shifted left to sit beneath the tyre's new centred position */
+  left: clamp(48%, 58vw, 66%);
+  bottom: clamp(14%, 18vh, 22%);
   z-index: 0;
-  width: min(28vw, 440px);
+  width: min(26vw, 400px);
   height: 150px;
   opacity: 0;
   filter: blur(0.2px);

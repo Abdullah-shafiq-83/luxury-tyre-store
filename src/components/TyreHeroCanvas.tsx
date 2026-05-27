@@ -9,9 +9,12 @@ const prefersReducedMotion = () =>
 const easeOutQuart = (value: number) => 1 - Math.pow(1 - value, 4);
 const settledYaw = -0.42;
 const settledPitch = 0.08;
-const startX = 6.2;
-const stopX = 1.08;
-const stopY = 0.58;
+// Reduced startX / stopX so the tyre lands in the right-center of the
+// viewport instead of the far-right edge. Also lowered stopY slightly
+// to sit closer to the vertical centre of the hero.
+const startX = 5.2;
+const stopX = 1.55;
+const stopY = 0.42;
 
 export function TyreHeroCanvas() {
   const mountRef = useRef<HTMLDivElement | null>(null);
@@ -67,7 +70,9 @@ export function TyreHeroCanvas() {
         const size = box.getSize(new THREE.Vector3());
         const center = box.getCenter(new THREE.Vector3());
         const maxAxis = Math.max(size.x, size.y, size.z) || 1;
-        const scale = 2.9 / maxAxis;
+        // Reduced from 2.9 → 2.5 so the tyre is proportionate to the hero
+        // and stays fully visible within the viewport on all screen sizes.
+        const scale = 2.5 / maxAxis;
 
         model.position.sub(center);
         model.scale.setScalar(scale);
@@ -90,6 +95,14 @@ export function TyreHeroCanvas() {
     );
 
     const reducedMotion = prefersReducedMotion();
+
+    // Pointer/device-driven responsiveness
+    const pointer = {
+      x: stopX,
+      yaw: settledYaw,
+      pitch: settledPitch,
+    };
+
     const target = {
       spin: 0,
       x: stopX,
@@ -97,6 +110,7 @@ export function TyreHeroCanvas() {
       yaw: 0,
       pitch: settledPitch,
     };
+
     const current = {
       spin: 0,
       x: reducedMotion ? target.x : startX,
@@ -114,6 +128,37 @@ export function TyreHeroCanvas() {
     let autoSpinStart = reducedMotion ? 0 : introStart + introDuration;
     let scrollStartY = window.scrollY;
     let smoothedScrollDistance = 0;
+
+    const handlePointerMove = (event: PointerEvent) => {
+      if (!introComplete || reducedMotion || !mount) return;
+      const rect = mount.getBoundingClientRect();
+      const centerX = rect.left + rect.width / 2;
+      const centerY = rect.top + rect.height / 2;
+      const ratioX = THREE.MathUtils.clamp((event.clientX - centerX) / (rect.width / 2), -1, 1);
+      const ratioY = THREE.MathUtils.clamp((event.clientY - centerY) / (rect.height / 2), -1, 1);
+
+      pointer.x = THREE.MathUtils.lerp(stopX, stopX + 0.28, ratioX);
+      pointer.yaw = THREE.MathUtils.lerp(settledYaw, settledYaw + ratioX * 0.22, Math.abs(ratioX));
+      pointer.pitch = THREE.MathUtils.lerp(settledPitch, settledPitch - ratioY * 0.1, 0.55);
+    };
+
+    const handlePointerLeave = () => {
+      pointer.x = stopX;
+      pointer.yaw = settledYaw;
+      pointer.pitch = settledPitch;
+    };
+
+    const handleDeviceOrientation = (e: DeviceOrientationEvent) => {
+      if (!introComplete || reducedMotion) return;
+      const gamma = e.gamma ?? 0; // left-right tilt (-90..90)
+      const beta = e.beta ?? 0; // front-back tilt (-180..180)
+      const ratioX = THREE.MathUtils.clamp(gamma / 30, -1, 1);
+      const ratioY = THREE.MathUtils.clamp((beta - 10) / 30, -1, 1);
+
+      pointer.x = THREE.MathUtils.lerp(stopX, stopX + 0.28, ratioX);
+      pointer.yaw = THREE.MathUtils.lerp(settledYaw, settledYaw + ratioX * 0.22, Math.abs(ratioX));
+      pointer.pitch = THREE.MathUtils.lerp(settledPitch, settledPitch - ratioY * 0.12, 0.55);
+    };
 
     const resize = () => {
       const width = mount.clientWidth || 1;
@@ -164,10 +209,12 @@ export function TyreHeroCanvas() {
 
         smoothedScrollDistance = THREE.MathUtils.lerp(smoothedScrollDistance, scrollDistance, 0.055);
         target.spin = introEndSpin + autoSpin - smoothedScrollDistance * 0.011;
-        target.x = stopX;
+
+        // blend in pointer/device-driven offsets when available
+        target.x = THREE.MathUtils.lerp(stopX, pointer.x, 0.28);
         target.y = stopY;
-        target.yaw = settledYaw;
-        target.pitch = settledPitch;
+        target.yaw = THREE.MathUtils.lerp(settledYaw, pointer.yaw, 0.42);
+        target.pitch = THREE.MathUtils.lerp(settledPitch, pointer.pitch, 0.5);
       }
 
       current.spin = THREE.MathUtils.lerp(current.spin, target.spin, introComplete ? 0.08 : 0.14);
@@ -202,11 +249,24 @@ export function TyreHeroCanvas() {
     animate();
 
     window.addEventListener("resize", resize);
+    // Capture pointer and device orientation for interactivity
+    window.addEventListener("pointermove", handlePointerMove);
+    window.addEventListener("pointerleave", handlePointerLeave);
+    window.addEventListener("pointercancel", handlePointerLeave);
+    if (typeof window !== "undefined" && "DeviceOrientationEvent" in window) {
+      window.addEventListener("deviceorientation", handleDeviceOrientation as EventListener);
+    }
 
     return () => {
       disposed = true;
       cancelAnimationFrame(rafId);
       window.removeEventListener("resize", resize);
+      window.removeEventListener("pointermove", handlePointerMove);
+      window.removeEventListener("pointerleave", handlePointerLeave);
+      window.removeEventListener("pointercancel", handlePointerLeave);
+      if (typeof window !== "undefined" && "DeviceOrientationEvent" in window) {
+        window.removeEventListener("deviceorientation", handleDeviceOrientation as EventListener);
+      }
       renderer.dispose();
       renderer.domElement.remove();
       scene.traverse((object) => {
