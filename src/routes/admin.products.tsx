@@ -61,10 +61,10 @@ function ProductsAdmin() {
   }
 
   return (
-    <div className="p-8 space-y-6">
-      <div className="flex items-center justify-between">
+    <div className="p-4 sm:p-6 lg:p-8 space-y-6">
+      <div className="flex items-center justify-between gap-3 flex-wrap">
         <div>
-          <h1 className="text-3xl font-serif font-bold">Products</h1>
+          <h1 className="text-2xl sm:text-3xl font-serif font-bold">Products</h1>
           <p className="text-sm text-muted-foreground">{items.length} products</p>
         </div>
         <Dialog open={open} onOpenChange={(o) => { setOpen(o); if (!o) setEditing(null); }}>
@@ -73,7 +73,7 @@ function ProductsAdmin() {
               <Plus className="w-4 h-4" /> Add product
             </Button>
           </DialogTrigger>
-          <DialogContent className="max-w-3xl max-h-[90vh] overflow-y-auto">
+          <DialogContent className="max-w-3xl w-[calc(100vw-2rem)] max-h-[90vh] overflow-y-auto">
             <DialogHeader><DialogTitle>{editing ? "Edit product" : "New product"}</DialogTitle></DialogHeader>
             <ProductForm product={editing} categories={cats} onDone={() => { setOpen(false); load(); }} />
           </DialogContent>
@@ -174,17 +174,17 @@ function ProductForm({ product, categories, onDone }: { product: any; categories
 
   return (
     <form onSubmit={save} className="space-y-4">
-      <div className="grid grid-cols-2 gap-4">
-        <div className="col-span-2"><Label>Title</Label><Input required value={form.title} onChange={(e) => setForm({ ...form, title: e.target.value })} /></div>
-        <div className="col-span-2"><Label>Short description</Label><Input value={form.short_description ?? ""} onChange={(e) => setForm({ ...form, short_description: e.target.value })} /></div>
-        <div className="col-span-2"><Label>Description</Label><Textarea rows={4} value={form.description ?? ""} onChange={(e) => setForm({ ...form, description: e.target.value })} /></div>
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+        <div className="sm:col-span-2"><Label>Title</Label><Input required value={form.title} onChange={(e) => setForm({ ...form, title: e.target.value })} /></div>
+        <div className="sm:col-span-2"><Label>Short description</Label><Input value={form.short_description ?? ""} onChange={(e) => setForm({ ...form, short_description: e.target.value })} /></div>
+        <div className="sm:col-span-2"><Label>Description</Label><Textarea rows={4} value={form.description ?? ""} onChange={(e) => setForm({ ...form, description: e.target.value })} /></div>
         <div><Label>Price</Label><Input type="number" step="0.01" required value={form.price} onChange={(e) => setForm({ ...form, price: e.target.value })} /></div>
         <div><Label>Discount price</Label><Input type="number" step="0.01" value={form.discount_price ?? ""} onChange={(e) => setForm({ ...form, discount_price: e.target.value || null })} /></div>
         <div><Label>Stock</Label><Input type="number" value={form.stock} onChange={(e) => setForm({ ...form, stock: e.target.value })} /></div>
         <div><Label>SKU</Label><Input value={form.sku ?? ""} onChange={(e) => setForm({ ...form, sku: e.target.value })} /></div>
         <div><Label>Brand</Label><Input value={form.brand ?? ""} onChange={(e) => setForm({ ...form, brand: e.target.value })} placeholder="Michelin, BBS…" /></div>
         <div><Label>Size</Label><Input value={form.size ?? ""} onChange={(e) => setForm({ ...form, size: e.target.value })} placeholder='19", 245/40R19…' /></div>
-        <div className="col-span-2"><Label>Category</Label>
+        <div className="sm:col-span-2"><Label>Category</Label>
           <Select value={form.category_id ?? "none"} onValueChange={(v) => setForm({ ...form, category_id: v === "none" ? null : v })}>
             <SelectTrigger><SelectValue placeholder="Select category" /></SelectTrigger>
             <SelectContent>
@@ -193,9 +193,9 @@ function ProductForm({ product, categories, onDone }: { product: any; categories
             </SelectContent>
           </Select>
         </div>
-        <div className="col-span-2"><Label>Tags (comma-separated)</Label><Input value={tagsStr} onChange={(e) => setTagsStr(e.target.value)} /></div>
-        <div className="col-span-2"><Label>Variants (JSON array, e.g. [{`{"size":"19\""},{"color":"black"}`}])</Label><Textarea rows={3} value={variantsStr} onChange={(e) => setVariantsStr(e.target.value)} className="font-mono text-xs" /></div>
-        <div className="col-span-2 grid grid-cols-2 gap-3">
+        <div className="sm:col-span-2"><Label>Tags (comma-separated)</Label><Input value={tagsStr} onChange={(e) => setTagsStr(e.target.value)} /></div>
+        <div className="sm:col-span-2"><Label>Variants (JSON array, e.g. [{`{"size":"19\""},{"color":"black"}`}])</Label><Textarea rows={3} value={variantsStr} onChange={(e) => setVariantsStr(e.target.value)} className="font-mono text-xs" /></div>
+        <div className="sm:col-span-2 grid grid-cols-1 sm:grid-cols-2 gap-3">
           {[
             ["is_featured", "Featured"], ["is_best_seller", "Best seller"],
             ["is_new_arrival", "New arrival"], ["is_visible", "Visible"],
@@ -206,7 +206,7 @@ function ProductForm({ product, categories, onDone }: { product: any; categories
             </label>
           ))}
         </div>
-        <div className="col-span-2 space-y-2">
+        <div className="sm:col-span-2 space-y-2">
           <Label>Images</Label>
           <label className="flex flex-col items-center justify-center border-2 border-dashed border-border/60 rounded-lg py-6 cursor-pointer hover:border-primary/60 hover:bg-card/40 transition">
             <Upload className="w-6 h-6 text-muted-foreground mb-2" />

@@ -72,8 +72,8 @@ function Orders() {
   }
 
   return (
-    <div className="p-8 space-y-6">
-      <h1 className="text-3xl font-serif font-bold">Orders</h1>
+    <div className="p-4 sm:p-6 lg:p-8 space-y-6">
+      <h1 className="text-2xl sm:text-3xl font-serif font-bold">Orders</h1>
       <div className="flex gap-3 flex-wrap">
         <Input placeholder="Search by name, email, or order id…" value={q} onChange={(e) => setQ(e.target.value)} className="max-w-sm" />
         <Select value={filter} onValueChange={setFilter}>
