@@ -61,10 +61,10 @@ function ProductsAdmin() {
   }
 
   return (
-    <div className="p-8 space-y-6">
-      <div className="flex items-center justify-between">
+    <div className="p-4 sm:p-6 lg:p-8 space-y-6">
+      <div className="flex items-center justify-between gap-3 flex-wrap">
         <div>
-          <h1 className="text-3xl font-serif font-bold">Products</h1>
+          <h1 className="text-2xl sm:text-3xl font-serif font-bold">Products</h1>
           <p className="text-sm text-muted-foreground">{items.length} products</p>
         </div>
         <Dialog open={open} onOpenChange={(o) => { setOpen(o); if (!o) setEditing(null); }}>
@@ -73,7 +73,7 @@ function ProductsAdmin() {
               <Plus className="w-4 h-4" /> Add product
             </Button>
           </DialogTrigger>
-          <DialogContent className="max-w-3xl max-h-[90vh] overflow-y-auto">
+          <DialogContent className="max-w-3xl w-[calc(100vw-2rem)] max-h-[90vh] overflow-y-auto">
             <DialogHeader><DialogTitle>{editing ? "Edit product" : "New product"}</DialogTitle></DialogHeader>
             <ProductForm product={editing} categories={cats} onDone={() => { setOpen(false); load(); }} />
           </DialogContent>
