@@ -1,6 +1,7 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
 import { supabase } from "@/integrations/supabase/client";
+import { useRealtimeTable } from "@/lib/realtime";
 import { Card } from "@/components/ui/card";
 import { DollarSign, Package, ShoppingBag, TrendingUp, Star, Loader2 } from "lucide-react";
 
@@ -13,22 +14,46 @@ function Dashboard() {
   const [recent, setRecent] = useState<any[]>([]);
   const [top, setTop] = useState<any[]>([]);
 
-  useEffect(() => {
-    (async () => {
-      const [{ count: orders }, { data: revData }, { count: products }, { count: reviews }, { data: recentOrders }, { data: topProducts }] = await Promise.all([
-        supabase.from("orders").select("*", { count: "exact", head: true }),
-        supabase.from("orders").select("total"),
-        supabase.from("products").select("*", { count: "exact", head: true }),
-        supabase.from("reviews").select("*", { count: "exact", head: true }),
-        supabase.from("orders").select("id,customer_name,total,status,created_at").order("created_at", { ascending: false }).limit(5),
-        supabase.from("products").select("id,title,price,is_best_seller,main_image_url").eq("is_best_seller", true).limit(5),
-      ]);
-      const revenue = (revData ?? []).reduce((s, r: any) => s + Number(r.total || 0), 0);
-      setStats({ orders: orders ?? 0, revenue, products: products ?? 0, reviews: reviews ?? 0 });
-      setRecent(recentOrders ?? []);
-      setTop(topProducts ?? []);
-    })();
+  // Extracted into a stable callback so useRealtimeTable can call it without
+  // triggering re-subscriptions on every render.
+  const load = useCallback(async () => {
+    const [
+      { count: orders },
+      { data: revData },
+      { count: products },
+      { count: reviews },
+      { data: recentOrders },
+      { data: topProducts },
+    ] = await Promise.all([
+      supabase.from("orders").select("*", { count: "exact", head: true }),
+      supabase.from("orders").select("total"),
+      supabase.from("products").select("*", { count: "exact", head: true }),
+      supabase.from("reviews").select("*", { count: "exact", head: true }),
+      supabase
+        .from("orders")
+        .select("id,customer_name,total,status,created_at")
+        .order("created_at", { ascending: false })
+        .limit(5),
+      supabase
+        .from("products")
+        .select("id,title,price,is_best_seller,main_image_url")
+        .eq("is_best_seller", true)
+        .limit(5),
+    ]);
+    const revenue = (revData ?? []).reduce((s, r: any) => s + Number(r.total || 0), 0);
+    setStats({ orders: orders ?? 0, revenue, products: products ?? 0, reviews: reviews ?? 0 });
+    setRecent(recentOrders ?? []);
+    setTop(topProducts ?? []);
   }, []);
+
+  // Initial fetch
+  useEffect(() => { load(); }, [load]);
+
+  // Real-time: any change to orders, products, or reviews instantly refreshes
+  // all dashboard stats without a manual page reload.
+  useRealtimeTable("orders", load);
+  useRealtimeTable("products", load);
+  useRealtimeTable("reviews", load);
 
   if (!stats) return <div className="grid place-items-center h-96"><Loader2 className="w-6 h-6 animate-spin text-primary" /></div>;
 

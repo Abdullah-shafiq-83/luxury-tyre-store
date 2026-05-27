@@ -1,5 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
+import { useRealtimeTable } from "@/lib/realtime";
 import { supabase } from "@/integrations/supabase/client";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -13,6 +14,8 @@ function Reviews() {
   const [items, setItems] = useState<any[]>([]); const [loading, setLoading] = useState(true);
   async function load() { setLoading(true); const { data } = await supabase.from("reviews").select("*").order("created_at", { ascending: false }); setItems(data ?? []); setLoading(false); }
   useEffect(() => { load(); }, []);
+  // Real-time: re-fetch whenever a review is created, approved, or deleted.
+  useRealtimeTable("reviews", load);
   async function update(id: string, patch: any) { const { error } = await supabase.from("reviews").update(patch).eq("id", id); if (error) return toast.error(error.message); load(); }
   async function del(id: string) { if (!confirm("Delete review?")) return; const { error } = await supabase.from("reviews").delete().eq("id", id); if (error) return toast.error(error.message); load(); }
   return (

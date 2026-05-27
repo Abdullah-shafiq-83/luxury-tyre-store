@@ -1,5 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
+import { useRealtimeTable } from "@/lib/realtime";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -33,6 +34,11 @@ function ProductsAdmin() {
     setItems(p ?? []); setCats(c ?? []); setLoading(false);
   }
   useEffect(() => { load(); }, []);
+
+  // Real-time: any INSERT/UPDATE/DELETE on products or categories instantly
+  // re-fetches the list so the admin always sees the current state.
+  useRealtimeTable("products", load);
+  useRealtimeTable("categories", load);
 
   async function remove(id: string) {
     if (!confirm("Delete this product?")) return;

@@ -1,5 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
+import { useRealtimeTable } from "@/lib/realtime";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -15,6 +16,8 @@ function Cats() {
   const [loading, setLoading] = useState(true);
   async function load() { setLoading(true); const { data } = await supabase.from("categories").select("*").order("sort_order"); setItems(data ?? []); setLoading(false); }
   useEffect(() => { load(); }, []);
+  // Real-time: reflect any category additions or deletions immediately.
+  useRealtimeTable("categories", load);
   async function add(e: React.FormEvent) {
     e.preventDefault();
     const { error } = await supabase.from("categories").insert({ name, slug: slug || name.toLowerCase().replace(/\s+/g, "-"), image_url: img || null, sort_order: items.length });

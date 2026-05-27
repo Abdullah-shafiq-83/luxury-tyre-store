@@ -98,6 +98,26 @@ export function useProduct(id: string) {
     fetchProduct(id)
       .then((p) => alive && setProduct(p))
       .finally(() => alive && setLoading(false));
+
+    // Re-fetch this specific product whenever it changes in the database
+    // so the storefront detail page stays in sync with admin edits instantly.
+    const ch = supabase
+      .channel(`product-${id}-${Math.random().toString(36).slice(2, 8)}`)
+      .on(
+        "postgres_changes",
+        { event: "*", schema: "public", table: "products", filter: `id=eq.${id}` },
+        () => {
+          fetchProduct(id)
+            .then((p) => alive && setProduct(p))
+            .catch(() => {});
+        },
+      )
+      .subscribe();
+
+    return () => {
+      alive = false;
+      supabase.removeChannel(ch);
+    };
   }, [id]);
   return { product, loading };
 }
