@@ -213,3 +213,90 @@
   100% { transform: translateY(-10vh) scale(1); opacity: 0; }
 }
 .animate-particle { animation: particle-rise linear infinite; }
+
+.tyre-hero-canvas canvas {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+}
+
+.tyre-smoke {
+  position: absolute;
+  left: clamp(58%, 66vw, 74%);
+  bottom: clamp(18%, 22vh, 26%);
+  z-index: 0;
+  width: min(28vw, 440px);
+  height: 150px;
+  opacity: 0;
+  filter: blur(0.2px);
+  animation: smoke-presence 5s ease 1.55s forwards;
+}
+
+.tyre-smoke span {
+  position: absolute;
+  bottom: 0;
+  left: 50%;
+  width: 140px;
+  height: 46px;
+  border-radius: 999px;
+  background:
+    radial-gradient(ellipse at center, rgba(245, 243, 240, 0.2), rgba(245, 243, 240, 0.08) 48%, transparent 72%);
+  filter: blur(14px);
+  transform: translateX(-50%) scale(0.35);
+  animation: tyre-smoke-puff 2.6s ease-out 1.6s 2;
+}
+
+.tyre-smoke span:nth-child(2) {
+  left: 42%;
+  width: 120px;
+  animation-delay: 1.9s;
+  animation-duration: 2.8s;
+}
+
+.tyre-smoke span:nth-child(3) {
+  left: 58%;
+  width: 170px;
+  animation-delay: 2.2s;
+  animation-duration: 3s;
+}
+
+.tyre-smoke span:nth-child(4) {
+  left: 35%;
+  width: 110px;
+  animation-delay: 2.5s;
+  animation-duration: 2.7s;
+}
+
+.tyre-smoke span:nth-child(5) {
+  left: 65%;
+  width: 130px;
+  animation-delay: 2.9s;
+  animation-duration: 2.9s;
+}
+
+@keyframes smoke-presence {
+  0% { opacity: 0; }
+  14% { opacity: 0.66; }
+  72% { opacity: 0.5; }
+  100% { opacity: 0; }
+}
+
+@keyframes tyre-smoke-puff {
+  0% {
+    opacity: 0;
+    transform: translate(-50%, 16px) scale(0.35);
+  }
+  18% {
+    opacity: 0.48;
+  }
+  100% {
+    opacity: 0;
+    transform: translate(-50%, -62px) scale(1.55);
+  }
+}
+
+@media (max-width: 767px) {
+  .tyre-smoke {
+    display: none;
+  }
+}
