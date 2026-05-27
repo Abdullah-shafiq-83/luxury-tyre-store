@@ -34,24 +34,24 @@ function CartPage() {
               {cart.map(({ product, qty }) => (
                 <div
                   key={product.id}
-                  className="bg-card border border-border rounded-xl p-4 flex gap-4 shadow-soft"
+                  className="bg-card border border-border rounded-xl p-3 sm:p-4 flex gap-3 sm:gap-4 shadow-soft"
                 >
                   <img
                     src={product.image}
                     alt={product.name}
-                    className="w-24 h-24 rounded-lg object-cover bg-muted"
+                    className="w-20 h-20 sm:w-24 sm:h-24 rounded-lg object-cover bg-muted shrink-0"
                   />
                   <div className="flex-1 min-w-0">
                     <div className="text-xs text-muted-foreground">{product.brand}</div>
                     <Link
                       to="/product/$id"
                       params={{ id: product.id }}
-                      className="font-serif font-bold hover:text-primary"
+                      className="font-serif font-bold hover:text-primary line-clamp-2 break-words"
                     >
                       {product.name}
                     </Link>
                     <div className="text-sm mt-1">${product.price}</div>
-                    <div className="flex items-center gap-3 mt-3">
+                    <div className="flex items-center gap-3 mt-3 flex-wrap">
                       <div className="flex items-center border border-input rounded-md">
                         <button className="w-8 h-8 hover:bg-muted" onClick={() => updateQty(product.id, qty - 1)}>−</button>
                         <span className="w-8 text-center text-sm">{qty}</span>
@@ -66,7 +66,7 @@ function CartPage() {
                       </button>
                     </div>
                   </div>
-                  <div className="font-bold">${(product.price * qty).toFixed(2)}</div>
+                  <div className="font-bold shrink-0 text-sm sm:text-base">${(product.price * qty).toFixed(2)}</div>
                 </div>
               ))}
             </div>
