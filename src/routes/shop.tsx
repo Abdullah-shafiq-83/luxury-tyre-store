@@ -53,8 +53,8 @@ function Shop() {
 
         <div className="grid lg:grid-cols-[260px_1fr] gap-8">
           {/* Filters */}
-          <aside className="bg-card border border-border rounded-xl p-5 h-fit shadow-soft sticky top-20">
-            <h3 className="font-serif font-bold mb-4">Filter</h3>
+          <aside className="glass-card rounded-xl p-5 h-fit sticky top-20 z-10 relative overflow-hidden">
+            <h3 className="font-serif font-bold mb-4 text-glow">Filter</h3>
 
             <div className="mb-6">
               <div className="text-xs uppercase tracking-wider text-muted-foreground mb-2">Category</div>
@@ -65,7 +65,7 @@ function Shop() {
                     size="sm"
                     variant={category === c ? "default" : "outline"}
                     onClick={() => navigate({ search: { category: c } })}
-                    className={category === c ? "bg-primary text-primary-foreground" : ""}
+                    className={category === c ? "bg-primary text-primary-foreground shadow-glow" : "glass hover:bg-primary/20"}
                   >
                     {c[0].toUpperCase() + c.slice(1)}
                   </Button>
@@ -78,11 +78,11 @@ function Shop() {
               <select
                 value={brand}
                 onChange={(e) => setBrand(e.target.value)}
-                className="w-full bg-background border border-input rounded-md px-3 py-2 text-sm"
+                className="w-full bg-background/50 glass border border-input rounded-md px-3 py-2 text-sm"
               >
-                <option value="all">All brands</option>
+                <option value="all" className="bg-background">All brands</option>
                 {brands.map((b) => (
-                  <option key={b} value={b}>{b}</option>
+                  <option key={b} value={b} className="bg-background">{b}</option>
                 ))}
               </select>
             </div>
@@ -94,7 +94,7 @@ function Shop() {
               </div>
               <Slider
                 min={100}
-                max={2000}
+                max={3000}
                 step={50}
                 value={[maxPrice]}
                 onValueChange={(v) => setMaxPrice(v[0])}

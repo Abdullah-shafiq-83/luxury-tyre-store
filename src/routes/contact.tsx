@@ -35,7 +35,7 @@ function Contact() {
               { Icon: Phone, label: "Phone", value: "+1 (555) 012-3456" },
               { Icon: MapPin, label: "Showroom", value: "221 Sunset Blvd, LA" },
             ].map(({ Icon, label, value }) => (
-              <div key={label} className="bg-card border border-border rounded-xl p-5 flex gap-4 shadow-soft">
+              <div key={label} className="glass-card rounded-xl p-5 flex gap-4">
                 <div className="w-11 h-11 rounded-lg bg-gradient-primary text-primary-foreground flex items-center justify-center shrink-0">
                   <Icon className="w-5 h-5" />
                 </div>
@@ -53,27 +53,27 @@ function Contact() {
               toast.success("Thanks! We'll be in touch shortly.");
               (e.target as HTMLFormElement).reset();
             }}
-            className="bg-card border border-border rounded-xl p-6 md:p-8 shadow-soft space-y-5"
+            className="glass-card rounded-xl p-6 md:p-8 space-y-5"
           >
             <div className="grid sm:grid-cols-2 gap-4">
               <div>
                 <Label htmlFor="name">Name</Label>
-                <Input id="name" required className="mt-1.5" />
+                <Input id="name" required className="mt-1.5 glass focus-visible:shadow-[0_0_15px_rgba(255,0,40,0.5)] focus-visible:border-primary transition-all duration-300" />
               </div>
               <div>
                 <Label htmlFor="email">Email</Label>
-                <Input id="email" type="email" required className="mt-1.5" />
+                <Input id="email" type="email" required className="mt-1.5 glass focus-visible:shadow-[0_0_15px_rgba(255,0,40,0.5)] focus-visible:border-primary transition-all duration-300" />
               </div>
             </div>
             <div>
               <Label htmlFor="subj">Subject</Label>
-              <Input id="subj" required className="mt-1.5" />
+              <Input id="subj" required className="mt-1.5 glass focus-visible:shadow-[0_0_15px_rgba(255,0,40,0.5)] focus-visible:border-primary transition-all duration-300" />
             </div>
             <div>
               <Label htmlFor="msg">Message</Label>
-              <Textarea id="msg" rows={5} required className="mt-1.5" />
+              <Textarea id="msg" rows={5} required className="mt-1.5 glass focus-visible:shadow-[0_0_15px_rgba(255,0,40,0.5)] focus-visible:border-primary transition-all duration-300" />
             </div>
-            <Button type="submit" size="lg" className="w-full bg-gradient-primary text-primary-foreground shadow-elegant">
+            <Button type="submit" size="lg" className="w-full bg-gradient-primary text-primary-foreground shadow-elegant hover-lift">
               Send Message
             </Button>
           </form>

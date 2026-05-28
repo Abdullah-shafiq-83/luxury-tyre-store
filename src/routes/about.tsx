@@ -28,7 +28,7 @@ function About() {
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.6 }}
-              className="font-serif text-4xl md:text-6xl font-bold text-foreground"
+              className="font-serif text-5xl md:text-7xl font-bold text-foreground text-glow mb-4"
             >
               Built for drivers<br />who demand more.
             </motion.h1>
@@ -36,19 +36,19 @@ function About() {
         </div>
       </section>
 
-      <section className="max-w-3xl mx-auto px-4 md:px-8 py-16 md:py-24 prose prose-lg">
-        <p className="text-lg text-muted-foreground leading-relaxed mb-6">
+      <section className="max-w-3xl mx-auto px-4 md:px-8 py-16 md:py-24 prose prose-invert prose-lg">
+        <p className="text-xl text-muted-foreground leading-relaxed mb-6">
           TyreLux was founded in 2018 by a small team of motorsport engineers and design
           enthusiasts who believed that buying tyres and rims should feel as exciting as
           the drive itself.
         </p>
-        <p className="text-lg text-muted-foreground leading-relaxed mb-6">
+        <p className="text-xl text-muted-foreground leading-relaxed mb-6">
           Today, we partner directly with the world's most respected manufacturers —
           Michelin, Continental, BBS, OZ Racing, Enkei — to bring you a curated catalogue
           of authentic, performance-tested products. Every item ships with free fitting
           and an industry-leading 5-year warranty.
         </p>
-        <p className="text-lg text-muted-foreground leading-relaxed">
+        <p className="text-xl text-muted-foreground leading-relaxed">
           From daily commuters to weekend track-day warriors, our promise is simple:
           premium quality, expert advice, and the confidence to drive harder.
         </p>
@@ -66,9 +66,9 @@ function About() {
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             transition={{ delay: i * 0.1 }}
-            className="bg-card border border-border rounded-xl p-8 text-center shadow-soft"
+            className="glass-card hover-lift rounded-xl p-8 text-center"
           >
-            <div className="font-serif text-4xl font-bold text-gradient mb-2">{s.n}</div>
+            <div className="font-serif text-5xl font-bold text-gradient text-glow mb-3">{s.n}</div>
             <div className="text-sm text-muted-foreground uppercase tracking-wider">{s.l}</div>
           </motion.div>
         ))}

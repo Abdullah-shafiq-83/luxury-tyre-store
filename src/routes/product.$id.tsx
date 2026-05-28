@@ -61,9 +61,16 @@ function ProductPage() {
             initial={{ opacity: 0, scale: 0.95 }}
             animate={{ opacity: 1, scale: 1 }}
             transition={{ duration: 0.5 }}
-            className="aspect-square bg-gradient-warm rounded-2xl overflow-hidden border border-border shadow-soft"
+            className="relative"
           >
-            <ZoomImage src={product.image} alt={product.name} zoom={2.5} className="w-full h-full" />
+            {/* Ambient Red Lighting */}
+            <div className="absolute inset-0 bg-primary/20 blur-[80px] rounded-full mix-blend-screen pointer-events-none" />
+            
+            <div className="aspect-square glass-card rounded-2xl overflow-hidden shadow-glow relative z-10 flex items-center justify-center p-8">
+              <ZoomImage src={product.image} alt={product.name} zoom={2.5} className="w-full h-full object-contain" />
+              {/* Glossy Floor Reflection */}
+              <div className="absolute bottom-0 left-10 right-10 h-1/4 bg-gradient-to-t from-black/50 to-transparent blur-md pointer-events-none" />
+            </div>
           </motion.div>
 
           <motion.div

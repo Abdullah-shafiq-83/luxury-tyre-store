@@ -1,91 +1,65 @@
-import { useMemo } from "react";
 import { Link } from "@tanstack/react-router";
 import { motion } from "framer-motion";
-import { ArrowRight, Sparkles } from "lucide-react";
-import { Button } from "@/components/ui/button";
-import { TyreHeroCanvas } from "@/components/TyreHeroCanvas";
+import { ArrowRight, Target, ShieldCheck, Activity, PackageCheck, Users } from "lucide-react";
+
+const benefits = [
+  { icon: <ShieldCheck className="w-5 h-5" />, title: "Premium Quality",      desc: "World-class brands" },
+  { icon: <Activity    className="w-5 h-5" />, title: "Performance Tested",   desc: "For safety & durability" },
+  { icon: <PackageCheck className="w-5 h-5"/>, title: "Fast & Secure",        desc: "Nationwide delivery" },
+  { icon: <Users       className="w-5 h-5" />, title: "Expert Support",       desc: "Guidance you can trust" },
+];
 
 export function Hero() {
-  const particles = useMemo(
-    () =>
-      Array.from({ length: 18 }, (_, i) => ({
-        id: i,
-        left: Math.random() * 100,
-        size: 2 + Math.random() * 4,
-        duration: 12 + Math.random() * 18,
-        delay: Math.random() * 12,
-      })),
-    [],
-  );
-
   return (
-    <section className="relative overflow-hidden bg-background min-h-[82vh] md:min-h-[90vh]">
+    <section className="relative overflow-hidden bg-[#030303] min-h-[92vh] flex flex-col pt-20">
+      {/* Hero background video */}
+      <video
+        className="absolute inset-0 z-0 w-full h-full object-cover"
+        src="/hero.mp4"
+        autoPlay
+        loop
+        muted
+        playsInline
+        style={{ opacity: 0.88 }}
+      />
 
-      {/* ── Full-section background decorations ─────────────────── */}
-      <div className="pointer-events-none absolute -top-32 -left-32 w-[500px] h-[500px] rounded-full bg-primary/12 blur-[120px] animate-pulse-glow" />
-      <div className="pointer-events-none absolute bottom-0 right-0 w-[360px] h-[360px] rounded-full bg-primary/8 blur-[100px] animate-pulse-glow" style={{ animationDelay: "2.2s" }} />
-      <div className="absolute inset-0 pointer-events-none bg-[radial-gradient(ellipse_at_22%_55%,rgba(165,29,45,0.07),transparent_58%)]" />
+      {/* Gradient overlays */}
+      <div className="absolute inset-0 z-0 bg-gradient-to-r from-[#030303] via-[#030303]/75 to-transparent" />
+      <div className="absolute inset-0 z-0 bg-gradient-to-t from-[#030303] via-[#030303]/20 to-transparent" />
 
-      {/* Floating particles */}
-      <div className="pointer-events-none absolute inset-0 overflow-hidden">
-        {particles.map((p) => (
-          <span
-            key={p.id}
-            className="absolute rounded-full bg-primary-glow/60 animate-particle"
-            style={{
-              left: `${p.left}%`,
-              width: p.size,
-              height: p.size,
-              animationDuration: `${p.duration}s`,
-              animationDelay: `${p.delay}s`,
-              boxShadow: "0 0 8px rgba(210,36,58,0.8)",
-            }}
-          />
-        ))}
-      </div>
+      {/* Red ambient glow — left */}
+      <div className="absolute top-1/3 left-[-8%] w-[500px] h-[500px] bg-[#a51d2d]/18 rounded-full blur-[140px] z-0 pointer-events-none" />
+      {/* Red ambient glow — bottom center */}
+      <div className="absolute bottom-0 left-1/2 -translate-x-1/2 w-[700px] h-[200px] bg-[#a51d2d]/10 rounded-full blur-[100px] z-0 pointer-events-none" />
 
-      {/* ── True two-column grid ─────────────────────────────────── */}
-      {/*
-        This is the structural fix. Previously TyreHeroCanvas was absolute
-        inset-0 over the FULL viewport width, so stopX was placing the tyre
-        at ~70-80 % of the whole page — leaving a dark void in the middle and
-        clipping the tyre on the right edge on wide screens.
+      {/* Main content */}
+      <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 md:px-8 w-full flex-1 flex flex-col justify-center pb-44">
+        <div className="max-w-xl relative mt-8 md:mt-0">
 
-        Now the canvas lives inside the right column and is constrained by it.
-        stopX=0.2 means the tyre is slightly right-of-centre within its own
-        column, which is always in the right half of the page.  No maths
-        needed — if the column is on the right, the tyre is on the right. ✓
-      */}
-      <div className="relative max-w-7xl mx-auto px-4 sm:px-6 md:px-10
-                      grid md:grid-cols-2 gap-0
-                      min-h-[82vh] md:min-h-[90vh] items-center">
-
-        {/* ── Left column: copy ────────────────────────────────── */}
-        <div className="relative z-10 py-20 md:py-28 pr-0 md:pr-6">
-
-          {/* Badge */}
-          <motion.div
+          {/* Eyebrow label */}
+          <motion.p
             initial={{ opacity: 0, y: 10 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.08 }}
-            className="inline-flex items-center gap-2 px-4 py-2 rounded-full glass-maroon text-foreground text-xs font-medium mb-7"
+            transition={{ delay: 0.08, duration: 0.6 }}
+            className="text-[10px] font-bold uppercase tracking-[0.3em] text-[#c1121f] mb-5"
           >
-            <Sparkles className="w-3.5 h-3.5 text-primary-glow" />
-            Free fitting · Premium delivery
-          </motion.div>
+            Engineered for Performance
+          </motion.p>
 
           {/* Headline */}
           <motion.h1
-            initial={{ opacity: 0, y: 24 }}
+            initial={{ opacity: 0, y: 28 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.18, duration: 0.85 }}
-            className="font-serif text-[clamp(2.6rem,5vw,4.5rem)] font-bold leading-[1.06] mb-6 text-foreground tracking-tight"
+            className="font-serif text-[clamp(3.2rem,5.8vw,5.5rem)] font-bold leading-[1.04] mb-6 text-[#f5f3f0] tracking-tight"
           >
-            Drive with{" "}
-            <span className="text-gradient">Confidence</span>
-            <br />
-            Premium Tyres &<br />
-            Alloy Rims
+            Drive with <br />
+            <span
+              className="text-[#c1121f]"
+              style={{ textShadow: "0 0 40px rgba(193,18,31,0.6)" }}
+            >
+              Confidence.
+            </span>
           </motion.h1>
 
           {/* Sub-copy */}
@@ -93,78 +67,102 @@ export function Hero() {
             initial={{ opacity: 0, y: 18 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.35, duration: 0.8 }}
-            className="text-base md:text-lg text-muted-foreground mb-9 max-w-sm md:max-w-md leading-relaxed"
+            className="text-[0.95rem] text-gray-400 mb-10 max-w-[420px] leading-relaxed font-light"
           >
-            Hand-picked performance tyres and bespoke forged rims from the
-            world's finest manufacturers — delivered to your driveway.
+            Premium tyres crafted for those<br />
+            who demand excellence.
           </motion.p>
 
           {/* CTAs */}
           <motion.div
             initial={{ opacity: 0, y: 18 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.50, duration: 0.8 }}
-            className="flex flex-wrap gap-3 mb-12"
+            transition={{ delay: 0.5, duration: 0.8 }}
+            className="flex flex-wrap gap-4"
           >
-            <Button
-              asChild size="lg"
-              className="bg-gradient-primary hover:opacity-90 shadow-elegant text-primary-foreground border border-primary-glow/40 hover:scale-[1.03] transition-transform"
+            <Link
+              to="/shop"
+              search={{ category: "tyres" }}
+              className="inline-flex items-center gap-2 text-white font-semibold text-sm px-7 py-4 rounded-md transition-all hover:scale-[1.03] active:scale-[0.98]"
+              style={{
+                background: "linear-gradient(135deg,#6b1220 0%,#a51d2d 100%)",
+                border: "1px solid rgba(165,29,45,0.6)",
+                boxShadow: "0 0 28px rgba(165,29,45,0.3)",
+              }}
             >
-              <Link to="/shop" search={{ category: "tyres" }}>
-                Shop Now <ArrowRight className="ml-2 w-4 h-4" />
-              </Link>
-            </Button>
-            <Button
-              asChild size="lg" variant="outline"
-              className="glass border-foreground/20 text-foreground hover:bg-foreground/6 hover:scale-[1.03] transition-transform"
+              Shop Premium Tyres <ArrowRight className="w-4 h-4 opacity-80" />
+            </Link>
+            <Link
+              to="/shop"
+              search={{ category: "rims" }}
+              className="inline-flex items-center gap-2 text-white font-semibold text-sm px-7 py-4 rounded-md transition-all hover:bg-white/[0.05]"
+              style={{
+                background: "transparent",
+                border: "1px solid rgba(255,255,255,0.12)",
+              }}
             >
-              <Link to="/shop" search={{ category: "rims" }}>Explore Rims</Link>
-            </Button>
-          </motion.div>
-
-          {/* Stats */}
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ delay: 0.78, duration: 0.9 }}
-            className="flex items-center divide-x divide-border/60"
-          >
-            {[
-              { n: "50+",  l: "Brands" },
-              { n: "10k+", l: "Happy Drivers" },
-              { n: "24h",  l: "Delivery" },
-            ].map((s) => (
-              <div key={s.l} className="flex flex-col px-5 first:pl-0 last:pr-0">
-                <span className="font-serif text-2xl md:text-3xl font-bold text-primary-glow leading-none">
-                  {s.n}
-                </span>
-                <span className="text-xs text-muted-foreground mt-1">{s.l}</span>
-              </div>
-            ))}
+              <Target className="w-4 h-4 text-white/50" /> Find Your Fit
+            </Link>
           </motion.div>
         </div>
 
-        {/* ── Right column: 3-D tyre (contained!) ──────────────── */}
-        {/*
-          self-stretch makes this column fill the full grid-row height.
-          TyreHeroCanvas is absolute inset-0 so it fills exactly THIS column —
-          never the full viewport.  The tyre with stopX=0.2 sits slightly right
-          of the column centre, which is visually the right-centre of the page.
-
-          A thin left-edge fade blends the canvas edge with the dark background
-          so there's no hard cut between the two columns.
-        */}
-        <div className="hidden md:block relative self-stretch">
-          {/* Left-edge blend strip */}
-          <div
-            aria-hidden="true"
-            className="absolute inset-y-0 left-0 w-24 z-10 pointer-events-none
-                       bg-gradient-to-r from-background via-background/60 to-transparent"
-          />
-          <TyreHeroCanvas />
-        </div>
-
+        {/* Vertical scroll hint */}
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ delay: 1.1, duration: 1 }}
+          className="absolute right-5 md:right-8 bottom-36 hidden lg:flex flex-col items-center gap-5 text-white/25 text-[9px] tracking-[0.45em] uppercase"
+        >
+          <span style={{ writingMode: "vertical-rl" }} className="rotate-180">Scroll</span>
+          <span className="w-px h-16 bg-gradient-to-b from-white/20 to-transparent" />
+        </motion.div>
       </div>
+
+      {/* Feature strip */}
+      <motion.div
+        initial={{ opacity: 0, y: 24 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ delay: 0.85, duration: 0.8 }}
+        className="absolute bottom-0 left-0 right-0 z-20 flex justify-center px-4 pb-0"
+      >
+        <div
+          className="w-full max-w-5xl flex flex-col md:flex-row justify-between items-center gap-5 md:gap-2 px-8 md:px-12 py-6"
+          style={{
+            background: "rgba(8,4,9,0.75)",
+            backdropFilter: "blur(20px)",
+            borderRadius: "1.5rem 1.5rem 0 0",
+            border: "1px solid rgba(255,255,255,0.04)",
+            borderBottom: "none",
+            boxShadow: "0 -8px 40px rgba(0,0,0,0.4)",
+          }}
+        >
+          {benefits.map((b, i) => (
+            <div key={i} className="flex items-center gap-4 group">
+              <div
+                className="flex-shrink-0 w-11 h-11 rounded-full flex items-center justify-center text-white/50 group-hover:text-[#c1121f] transition-all duration-300"
+                style={{
+                  background: "rgba(255,255,255,0.03)",
+                  border: "1px solid rgba(255,255,255,0.07)",
+                }}
+                onMouseEnter={(e) => {
+                  const el = e.currentTarget as HTMLDivElement;
+                  el.style.borderColor = "rgba(193,18,31,0.3)";
+                }}
+                onMouseLeave={(e) => {
+                  const el = e.currentTarget as HTMLDivElement;
+                  el.style.borderColor = "rgba(255,255,255,0.07)";
+                }}
+              >
+                {b.icon}
+              </div>
+              <div className="flex flex-col">
+                <span className="text-[#f5f3f0] text-sm font-medium leading-tight">{b.title}</span>
+                <span className="text-white/35 text-[11px] mt-0.5 tracking-wide">{b.desc}</span>
+              </div>
+            </div>
+          ))}
+        </div>
+      </motion.div>
     </section>
   );
 }

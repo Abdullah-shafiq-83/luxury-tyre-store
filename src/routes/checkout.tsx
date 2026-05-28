@@ -105,56 +105,56 @@ function Checkout() {
       <div className="max-w-5xl mx-auto px-4 md:px-8 py-10 md:py-16">
         <h1 className="font-serif text-4xl md:text-5xl font-bold mb-8">Checkout</h1>
         <form onSubmit={handleSubmit} className="grid lg:grid-cols-[1fr_360px] gap-8">
-          <div className="bg-card border border-border rounded-xl p-6 shadow-soft space-y-5">
-            <h3 className="font-serif font-bold text-lg">Shipping Details</h3>
+          <div className="glass-card rounded-xl p-6 space-y-5">
+            <h3 className="font-serif font-bold text-lg text-glow">Shipping Details</h3>
             <div className="grid sm:grid-cols-2 gap-4">
               <div>
                 <Label htmlFor="fn">First name</Label>
-                <Input id="fn" name="fn" required maxLength={80} className="mt-1.5" />
+                <Input id="fn" name="fn" required maxLength={80} className="mt-1.5 glass focus-visible:shadow-[0_0_15px_rgba(255,0,40,0.5)] focus-visible:border-primary transition-all duration-300" />
               </div>
               <div>
                 <Label htmlFor="ln">Last name</Label>
-                <Input id="ln" name="ln" required maxLength={80} className="mt-1.5" />
+                <Input id="ln" name="ln" required maxLength={80} className="mt-1.5 glass focus-visible:shadow-[0_0_15px_rgba(255,0,40,0.5)] focus-visible:border-primary transition-all duration-300" />
               </div>
             </div>
             <div>
               <Label htmlFor="em">Email</Label>
-              <Input id="em" name="em" type="email" required maxLength={255} className="mt-1.5" />
+              <Input id="em" name="em" type="email" required maxLength={255} className="mt-1.5 glass focus-visible:shadow-[0_0_15px_rgba(255,0,40,0.5)] focus-visible:border-primary transition-all duration-300" />
             </div>
             <div>
               <Label htmlFor="ad">Address</Label>
-              <Input id="ad" name="ad" required maxLength={255} className="mt-1.5" />
+              <Input id="ad" name="ad" required maxLength={255} className="mt-1.5 glass focus-visible:shadow-[0_0_15px_rgba(255,0,40,0.5)] focus-visible:border-primary transition-all duration-300" />
             </div>
             <div className="grid sm:grid-cols-2 gap-4">
               <div>
                 <Label htmlFor="ct">City</Label>
-                <Input id="ct" name="ct" required maxLength={120} className="mt-1.5" />
+                <Input id="ct" name="ct" required maxLength={120} className="mt-1.5 glass focus-visible:shadow-[0_0_15px_rgba(255,0,40,0.5)] focus-visible:border-primary transition-all duration-300" />
               </div>
               <div>
                 <Label htmlFor="zp">Postal code</Label>
-                <Input id="zp" name="zp" required maxLength={20} className="mt-1.5" />
+                <Input id="zp" name="zp" required maxLength={20} className="mt-1.5 glass focus-visible:shadow-[0_0_15px_rgba(255,0,40,0.5)] focus-visible:border-primary transition-all duration-300" />
               </div>
             </div>
 
-            <h3 className="font-serif font-bold text-lg pt-4">Payment</h3>
+            <h3 className="font-serif font-bold text-lg pt-4 text-glow">Payment</h3>
             <div>
               <Label htmlFor="cc">Card number</Label>
-              <Input id="cc" placeholder="4242 4242 4242 4242" required className="mt-1.5" />
+              <Input id="cc" placeholder="4242 4242 4242 4242" required className="mt-1.5 glass focus-visible:shadow-[0_0_15px_rgba(255,0,40,0.5)] focus-visible:border-primary transition-all duration-300" />
             </div>
             <div className="grid sm:grid-cols-2 gap-4">
               <div>
                 <Label htmlFor="ex">Expiry</Label>
-                <Input id="ex" placeholder="MM/YY" required className="mt-1.5" />
+                <Input id="ex" placeholder="MM/YY" required className="mt-1.5 glass focus-visible:shadow-[0_0_15px_rgba(255,0,40,0.5)] focus-visible:border-primary transition-all duration-300" />
               </div>
               <div>
                 <Label htmlFor="cv">CVC</Label>
-                <Input id="cv" placeholder="123" required className="mt-1.5" />
+                <Input id="cv" placeholder="123" required className="mt-1.5 glass focus-visible:shadow-[0_0_15px_rgba(255,0,40,0.5)] focus-visible:border-primary transition-all duration-300" />
               </div>
             </div>
           </div>
 
-          <div className="bg-card border border-border rounded-xl p-6 shadow-soft h-fit sticky top-20">
-            <h3 className="font-serif font-bold mb-4">Summary</h3>
+          <div className="glass-card rounded-xl p-6 h-fit sticky top-20">
+            <h3 className="font-serif font-bold mb-4 text-glow">Summary</h3>
             <div className="space-y-2 text-sm mb-4 max-h-60 overflow-auto">
               {cart.map(({ product, qty }) => (
                 <div key={product.id} className="flex justify-between">
@@ -167,7 +167,7 @@ function Checkout() {
               <span>Total</span>
               <span>${subtotal.toFixed(2)}</span>
             </div>
-            <Button type="submit" size="lg" disabled={cart.length === 0 || submitting} className="w-full bg-gradient-primary text-primary-foreground shadow-elegant">
+            <Button type="submit" size="lg" disabled={cart.length === 0 || submitting} className="w-full bg-gradient-primary text-primary-foreground shadow-elegant hover-lift">
               {submitting ? <><Loader2 className="w-4 h-4 mr-2 animate-spin" /> Placing…</> : "Place Order"}
             </Button>
           </div>

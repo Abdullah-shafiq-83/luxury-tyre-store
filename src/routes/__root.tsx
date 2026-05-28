@@ -69,7 +69,7 @@ function RootShell({ children }: { children: React.ReactNode }) {
       <head>
         <HeadContent />
       </head>
-      <body>
+      <body className="cinematic-bg vignette-overlay min-h-screen dark text-foreground antialiased selection:bg-primary/30">
         {children}
         <Toaster />
         <Scripts />

@@ -46,24 +46,39 @@ export function mapProduct(row: any, categoryName?: string): Product {
   };
 }
 
+import { demoProducts } from "./demo-data";
+
 export async function fetchProducts(): Promise<Product[]> {
-  const { data, error } = await supabase
-    .from("products")
-    .select("*, categories(name, slug)")
-    .eq("is_visible", true)
-    .order("created_at", { ascending: false });
-  if (error) throw error;
-  return (data ?? []).map((r: any) => mapProduct(r, r.categories?.slug));
+  try {
+    const { data, error } = await supabase
+      .from("products")
+      .select("*, categories(name, slug)")
+      .eq("is_visible", true)
+      .order("created_at", { ascending: false });
+    if (error) throw error;
+    const dbProducts = (data ?? []).map((r: any) => mapProduct(r, r.categories?.slug));
+    return dbProducts.length > 0 ? dbProducts : demoProducts;
+  } catch (err) {
+    console.error("Supabase fetch failed, falling back to demo products", err);
+    return demoProducts;
+  }
 }
 
 export async function fetchProduct(id: string): Promise<Product | null> {
-  const { data, error } = await supabase
-    .from("products")
-    .select("*, categories(name, slug)")
-    .eq("id", id)
-    .maybeSingle();
-  if (error || !data) return null;
-  return mapProduct(data, (data as any).categories?.slug);
+  const demoProd = demoProducts.find(p => p.id === id);
+  if (demoProd) return demoProd;
+
+  try {
+    const { data, error } = await supabase
+      .from("products")
+      .select("*, categories(name, slug)")
+      .eq("id", id)
+      .maybeSingle();
+    if (error || !data) return null;
+    return mapProduct(data, (data as any).categories?.slug);
+  } catch (err) {
+    return null;
+  }
 }
 
 export function useProducts() {

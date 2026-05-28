@@ -21,10 +21,10 @@ function CartPage() {
         <h1 className="font-serif text-4xl md:text-5xl font-bold mb-8">Your Cart</h1>
 
         {cart.length === 0 ? (
-          <div className="text-center py-20 bg-card border border-border rounded-2xl">
+          <div className="text-center py-20 glass-card rounded-2xl">
             <ShoppingBag className="w-12 h-12 mx-auto text-muted-foreground mb-4" />
             <p className="text-muted-foreground mb-6">Your cart is empty.</p>
-            <Button asChild className="bg-gradient-primary text-primary-foreground">
+            <Button asChild className="bg-gradient-primary text-primary-foreground hover-lift">
               <Link to="/shop">Start shopping</Link>
             </Button>
           </div>
@@ -34,19 +34,21 @@ function CartPage() {
               {cart.map(({ product, qty }) => (
                 <div
                   key={product.id}
-                  className="bg-card border border-border rounded-xl p-3 sm:p-4 flex gap-3 sm:gap-4 shadow-soft"
+                  className="glass-card hover-lift rounded-xl p-3 sm:p-4 flex gap-3 sm:gap-4"
                 >
-                  <img
-                    src={product.image}
-                    alt={product.name}
-                    className="w-20 h-20 sm:w-24 sm:h-24 rounded-lg object-cover bg-muted shrink-0"
-                  />
+                  <div className="w-20 h-20 sm:w-24 sm:h-24 rounded-lg bg-black/40 flex items-center justify-center shrink-0">
+                    <img
+                      src={product.image}
+                      alt={product.name}
+                      className="w-full h-full object-contain"
+                    />
+                  </div>
                   <div className="flex-1 min-w-0">
-                    <div className="text-xs text-muted-foreground">{product.brand}</div>
+                    <div className="text-xs text-primary tracking-widest uppercase">{product.brand}</div>
                     <Link
                       to="/product/$id"
                       params={{ id: product.id }}
-                      className="font-serif font-bold hover:text-primary line-clamp-2 break-words"
+                      className="font-serif font-bold text-lg hover:text-primary line-clamp-2 break-words text-glow"
                     >
                       {product.name}
                     </Link>
@@ -71,8 +73,8 @@ function CartPage() {
               ))}
             </div>
 
-            <div className="bg-card border border-border rounded-xl p-6 h-fit shadow-soft sticky top-20">
-              <h3 className="font-serif font-bold text-lg mb-4">Order Summary</h3>
+            <div className="glass-card rounded-xl p-6 h-fit sticky top-20">
+              <h3 className="font-serif font-bold text-lg mb-4 text-glow">Order Summary</h3>
               <div className="space-y-2 text-sm mb-4">
                 <div className="flex justify-between">
                   <span className="text-muted-foreground">Subtotal</span>
@@ -87,7 +89,7 @@ function CartPage() {
                 <span>Total</span>
                 <span>${total.toFixed(2)}</span>
               </div>
-              <Button asChild size="lg" className="w-full bg-gradient-primary text-primary-foreground shadow-elegant">
+              <Button asChild size="lg" className="w-full bg-gradient-primary text-primary-foreground shadow-elegant hover-lift">
                 <Link to="/checkout">Checkout</Link>
               </Button>
             </div>
