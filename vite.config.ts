@@ -6,16 +6,9 @@ import tsconfigPaths from "vite-tsconfig-paths";
 
 export default defineConfig({
   plugins: [
-    // File-based routing code-gen (no SSR)
     TanStackRouterVite({ routesDirectory: "./src/routes", generatedRouteTree: "./src/routeTree.gen.ts" }),
-
-    // React JSX transform
     react(),
-
-    // Tailwind CSS v4
     tailwindcss(),
-
-    // Resolve @ alias from tsconfig.json
     tsconfigPaths(),
   ],
 
@@ -36,16 +29,6 @@ export default defineConfig({
   build: {
     outDir: "dist",
     sourcemap: false,
-    rollupOptions: {
-      output: {
-        manualChunks: {
-          vendor: ["react", "react-dom"],
-          router: ["@tanstack/react-router"],
-          supabase: ["@supabase/supabase-js"],
-          motion: ["framer-motion"],
-        },
-      },
-    },
   },
 
   server: {
