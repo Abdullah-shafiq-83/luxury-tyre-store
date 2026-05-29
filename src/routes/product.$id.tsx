@@ -1,6 +1,6 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { motion } from "framer-motion";
-import { Heart, ShoppingCart, ArrowLeft, Check, Loader2 } from "lucide-react";
+import { motion, AnimatePresence } from "framer-motion";
+import { Heart, ShoppingCart, ArrowLeft, Check, Loader2, ChevronLeft, ChevronRight } from "lucide-react";
 import { Layout } from "@/components/Layout";
 import { ZoomImage } from "@/components/ZoomImage";
 import { useProduct } from "@/lib/products";
@@ -24,6 +24,7 @@ function ProductPage() {
   const { product, loading } = useProduct(id);
   const { addToCart, toggleWishlist, wishlist } = useShop();
   const [qty, setQty] = useState(1);
+  const [activeIdx, setActiveIdx] = useState(0);
 
   if (loading) {
     return (
@@ -48,6 +49,9 @@ function ProductPage() {
 
   const wished = wishlist.includes(product.id);
   const outOfStock = (product.stock ?? 0) <= 0;
+  const images = product.images && product.images.length > 0 ? product.images : [product.image];
+  const activeImage = images[activeIdx] ?? product.image;
+  const hasMultiple = images.length > 1;
 
   return (
     <Layout>
@@ -57,22 +61,106 @@ function ProductPage() {
         </Link>
 
         <div className="grid md:grid-cols-2 gap-8 md:gap-12">
+          {/* ── Image Gallery Column ── */}
           <motion.div
             initial={{ opacity: 0, scale: 0.95 }}
             animate={{ opacity: 1, scale: 1 }}
             transition={{ duration: 0.5 }}
-            className="relative"
+            className="relative flex flex-col gap-4"
           >
-            {/* Ambient Red Lighting */}
+            {/* Ambient glow */}
             <div className="absolute inset-0 bg-primary/20 blur-[80px] rounded-full mix-blend-screen pointer-events-none" />
-            
-            <div className="aspect-square glass-card rounded-2xl overflow-hidden shadow-glow relative z-10 flex items-center justify-center p-8">
-              <ZoomImage src={product.image} alt={product.name} zoom={2.5} className="w-full h-full object-contain" />
-              {/* Glossy Floor Reflection */}
+
+            {/* Main image */}
+            <div className="relative aspect-square glass-card rounded-2xl overflow-hidden shadow-glow z-10 flex items-center justify-center p-8">
+              <AnimatePresence mode="wait">
+                <motion.div
+                  key={activeIdx}
+                  initial={{ opacity: 0, scale: 0.97 }}
+                  animate={{ opacity: 1, scale: 1 }}
+                  exit={{ opacity: 0, scale: 0.97 }}
+                  transition={{ duration: 0.25 }}
+                  className="w-full h-full"
+                >
+                  <ZoomImage src={activeImage} alt={product.name} zoom={2.5} className="w-full h-full object-contain" />
+                </motion.div>
+              </AnimatePresence>
+
+              {/* Reflection */}
               <div className="absolute bottom-0 left-10 right-10 h-1/4 bg-gradient-to-t from-black/50 to-transparent blur-md pointer-events-none" />
+
+              {/* Prev / Next arrows — shown only when multiple images */}
+              {hasMultiple && (
+                <>
+                  <button
+                    onClick={() => setActiveIdx((i) => Math.max(0, i - 1))}
+                    disabled={activeIdx === 0}
+                    className="absolute left-3 top-1/2 -translate-y-1/2 z-20 w-9 h-9 rounded-full flex items-center justify-center transition-all disabled:opacity-20"
+                    style={{ background: "rgba(0,0,0,0.55)", backdropFilter: "blur(8px)", border: "1px solid rgba(255,255,255,0.1)" }}
+                    aria-label="Previous image"
+                  >
+                    <ChevronLeft className="w-5 h-5 text-white" />
+                  </button>
+                  <button
+                    onClick={() => setActiveIdx((i) => Math.min(images.length - 1, i + 1))}
+                    disabled={activeIdx === images.length - 1}
+                    className="absolute right-3 top-1/2 -translate-y-1/2 z-20 w-9 h-9 rounded-full flex items-center justify-center transition-all disabled:opacity-20"
+                    style={{ background: "rgba(0,0,0,0.55)", backdropFilter: "blur(8px)", border: "1px solid rgba(255,255,255,0.1)" }}
+                    aria-label="Next image"
+                  >
+                    <ChevronRight className="w-5 h-5 text-white" />
+                  </button>
+
+                  {/* Dot indicator */}
+                  <div className="absolute bottom-4 left-0 right-0 flex justify-center gap-1.5 z-20">
+                    {images.map((_, i) => (
+                      <button
+                        key={i}
+                        onClick={() => setActiveIdx(i)}
+                        className="transition-all rounded-full"
+                        style={{
+                          width: i === activeIdx ? 20 : 6,
+                          height: 6,
+                          background: i === activeIdx ? "#c1121f" : "rgba(255,255,255,0.35)",
+                        }}
+                        aria-label={`Image ${i + 1}`}
+                      />
+                    ))}
+                  </div>
+                </>
+              )}
             </div>
+
+            {/* Thumbnail strip — only when multiple images */}
+            {hasMultiple && (
+              <div className="flex gap-3 overflow-x-auto pb-1 z-10">
+                {images.map((src, i) => (
+                  <button
+                    key={i}
+                    onClick={() => setActiveIdx(i)}
+                    className="flex-shrink-0 w-20 h-20 rounded-xl overflow-hidden transition-all duration-200"
+                    style={{
+                      border: i === activeIdx
+                        ? "2px solid #c1121f"
+                        : "2px solid rgba(255,255,255,0.1)",
+                      boxShadow: i === activeIdx ? "0 0 14px rgba(193,18,31,0.45)" : "none",
+                      opacity: i === activeIdx ? 1 : 0.55,
+                    }}
+                    aria-label={`View image ${i + 1}`}
+                  >
+                    <img
+                      src={src}
+                      alt={`${product.name} view ${i + 1}`}
+                      className="w-full h-full object-cover"
+                      loading="lazy"
+                    />
+                  </button>
+                ))}
+              </div>
+            )}
           </motion.div>
 
+          {/* ── Info Column ── */}
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
@@ -82,7 +170,39 @@ function ProductPage() {
               {product.brand} · {product.category}
             </div>
             <h1 className="font-serif text-3xl md:text-5xl font-bold mb-4">{product.name}</h1>
-            <div className="text-3xl font-bold mb-6">${product.price}</div>
+
+            {/* Price block */}
+            {product.originalPrice ? (() => {
+              const pct = Math.round((1 - product.price / product.originalPrice) * 100);
+              const saving = (product.originalPrice - product.price).toFixed(2);
+              return (
+                <div className="mb-6">
+                  <span
+                    className="inline-flex items-center gap-1.5 text-xs font-bold uppercase tracking-widest px-3 py-1 rounded-full mb-3"
+                    style={{
+                      background: "rgba(193,18,31,0.15)",
+                      border: "1px solid rgba(193,18,31,0.4)",
+                      color: "#c1121f",
+                      boxShadow: "0 0 12px rgba(193,18,31,0.2)",
+                    }}
+                  >
+                    🔥 {pct}% OFF — Limited Offer
+                  </span>
+                  <div className="flex items-baseline gap-4 flex-wrap">
+                    <span className="font-serif text-4xl font-bold text-white" style={{ textShadow: "0 0 20px rgba(193,18,31,0.4)" }}>
+                      ${product.price.toFixed(2)}
+                    </span>
+                    <span className="text-xl font-medium text-gray-500 line-through">
+                      ${product.originalPrice.toFixed(2)}
+                    </span>
+                  </div>
+                  <p className="mt-2 text-sm font-semibold text-[#c1121f]">You save ${saving}</p>
+                </div>
+              );
+            })() : (
+              <div className="text-3xl font-bold mb-6">${product.price.toFixed(2)}</div>
+            )}
+
             <p className="text-muted-foreground mb-8 leading-relaxed">{product.description}</p>
 
             {Object.keys(product.specs).length > 0 && (

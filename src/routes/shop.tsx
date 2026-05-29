@@ -26,7 +26,6 @@ function Shop() {
   const { category } = Route.useSearch();
   const navigate = Route.useNavigate();
   const { products, loading } = useProducts();
-  const [maxPrice, setMaxPrice] = useState(2000);
   const [brand, setBrand] = useState<string>("all");
 
   const brands = useMemo(
@@ -34,11 +33,20 @@ function Shop() {
     [products]
   );
 
+  // Compute slider ceiling from actual products so no product is hidden by default
+  const sliderMax = useMemo(
+    () => products.length > 0 ? Math.ceil(Math.max(...products.map((p) => p.price)) / 100) * 100 : 3000,
+    [products]
+  );
+
+  const [maxPrice, setMaxPrice] = useState<number | null>(null); // null = no limit
+  const effectiveMax = maxPrice ?? sliderMax;
+
   const filtered = useMemo(() => {
     return products.filter((p) => {
       if (category && category !== "all" && p.category !== category) return false;
       if (brand !== "all" && p.brand !== brand) return false;
-      if (p.price > maxPrice) return false;
+      if (maxPrice !== null && p.price > maxPrice) return false;
       return true;
     });
   }, [products, category, brand, maxPrice]);
@@ -90,14 +98,16 @@ function Shop() {
             <div>
               <div className="flex justify-between text-xs uppercase tracking-wider text-muted-foreground mb-3">
                 <span>Max price</span>
-                <span className="text-foreground font-semibold">${maxPrice}</span>
+                <span className="text-foreground font-semibold">
+                  {maxPrice === null || maxPrice >= sliderMax ? "Any" : `$${maxPrice}`}
+                </span>
               </div>
               <Slider
-                min={100}
-                max={3000}
+                min={0}
+                max={sliderMax}
                 step={50}
-                value={[maxPrice]}
-                onValueChange={(v) => setMaxPrice(v[0])}
+                value={[effectiveMax]}
+                onValueChange={(v) => setMaxPrice(v[0] >= sliderMax ? null : v[0])}
               />
             </div>
           </aside>

@@ -1,11 +1,7 @@
-import { Outlet, Link, createRootRoute, HeadContent, Scripts } from "@tanstack/react-router";
+import { Outlet, Link, createRootRoute } from "@tanstack/react-router";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { Toaster } from "@/components/ui/sonner";
-import appCss from "../styles.css?url";
 
-// One shared QueryClient for the entire app.
-// staleTime 0 means any cached query is always considered stale, ensuring
-// Supabase Realtime-triggered refetches always get fresh data.
 const queryClient = new QueryClient({
   defaultOptions: {
     queries: {
@@ -38,50 +34,15 @@ function NotFoundComponent() {
 }
 
 export const Route = createRootRoute({
-  head: () => ({
-    meta: [
-      { charSet: "utf-8" },
-      { name: "viewport", content: "width=device-width, initial-scale=1" },
-      { title: "TyreLux — Premium Tyres & Alloy Rims" },
-      { name: "description", content: "Drive with confidence. Premium performance tyres and bespoke alloy rims from the world's finest brands." },
-      { name: "author", content: "TyreLux" },
-      { property: "og:title", content: "TyreLux — Premium Tyres & Alloy Rims" },
-      { property: "og:description", content: "Drive with confidence. Premium performance tyres and bespoke alloy rims." },
-      { property: "og:type", content: "website" },
-      { name: "twitter:card", content: "summary" },
-      { name: "twitter:site", content: "@TyreLux" },
-    ],
-    links: [
-      {
-        rel: "stylesheet",
-        href: appCss,
-      },
-    ],
-  }),
-  shellComponent: RootShell,
   component: RootComponent,
   notFoundComponent: NotFoundComponent,
 });
-
-function RootShell({ children }: { children: React.ReactNode }) {
-  return (
-    <html lang="en">
-      <head>
-        <HeadContent />
-      </head>
-      <body className="cinematic-bg vignette-overlay min-h-screen dark text-foreground antialiased selection:bg-primary/30">
-        {children}
-        <Toaster />
-        <Scripts />
-      </body>
-    </html>
-  );
-}
 
 function RootComponent() {
   return (
     <QueryClientProvider client={queryClient}>
       <Outlet />
+      <Toaster />
     </QueryClientProvider>
   );
 }

@@ -56,7 +56,22 @@ export function ProductCard({
           {!zoomable && (
             <div className="absolute inset-0 bg-primary/0 group-hover:bg-primary/10 transition-colors pointer-events-none" />
           )}
+
+          {/* Discount badge on image */}
+          {product.originalPrice && (
+            <span
+              className="absolute top-3 left-3 text-[10px] font-bold uppercase tracking-wider px-2 py-1 rounded-md z-10"
+              style={{
+                background: "linear-gradient(135deg,#7b1020,#c1121f)",
+                color: "#fff",
+                boxShadow: "0 0 10px rgba(193,18,31,0.5)",
+              }}
+            >
+              {Math.round((1 - product.price / product.originalPrice) * 100)}% OFF
+            </span>
+          )}
         </div>
+
         <div className="p-5">
           <div className="text-xs uppercase tracking-wider text-primary-glow/80 mb-1">
             {product.brand} · {product.size}
@@ -65,7 +80,16 @@ export function ProductCard({
             {product.name}
           </h3>
           <div className="flex items-center justify-between">
-            <span className="font-sans text-xl font-bold text-foreground">${product.price}</span>
+            <div className="flex flex-col">
+              <span className="font-sans text-xl font-bold text-foreground">
+                ${product.price.toFixed(2)}
+              </span>
+              {product.originalPrice && (
+                <span className="text-xs text-gray-500 line-through leading-tight">
+                  ${product.originalPrice.toFixed(2)}
+                </span>
+              )}
+            </div>
             <Button
               size="sm"
               onClick={(e) => {

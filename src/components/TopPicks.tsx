@@ -1,87 +1,11 @@
-import { useState, useRef } from "react";
+import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { ChevronLeft, ChevronRight, Heart, ShoppingCart, ArrowRight } from "lucide-react";
+import { ChevronLeft, ChevronRight, Heart, ShoppingCart, ArrowRight, Loader2 } from "lucide-react";
 import { Link } from "@tanstack/react-router";
 import { useShop } from "@/store/cart";
 import { toast } from "sonner";
 import type { Product } from "@/lib/products";
-
-const featuredProducts: Product[] = [
-  {
-    id: "michelin-ps5",
-    name: "Pilot Sport 5",
-    brand: "Michelin",
-    category: "tyres",
-    price: 270,
-    size: "225/40 ZR18",
-    image: "https://images.unsplash.com/photo-1600705663738-963d8d64190c?auto=format&fit=crop&w=700&q=80",
-    description: "Ultra-high performance tyre.",
-    specs: {},
-    isBestSeller: true,
-    stock: 20,
-  },
-  {
-    id: "continental-pc7",
-    name: "PremiumContact 7",
-    brand: "Continental",
-    category: "tyres",
-    price: 210,
-    size: "225/45 R17",
-    image: "https://images.unsplash.com/photo-1617531653332-bd46c24f2068?auto=format&fit=crop&w=700&q=80",
-    description: "Extreme confidence at all speeds.",
-    specs: {},
-    stock: 30,
-  },
-  {
-    id: "bridgestone-s007a",
-    name: "Potenza S007A",
-    brand: "Bridgestone",
-    category: "tyres",
-    price: 260,
-    size: "245/40 ZR18",
-    image: "https://images.unsplash.com/photo-1580274455006-258169cd56a7?auto=format&fit=crop&w=700&q=80",
-    description: "Race-inspired grip and precision.",
-    specs: {},
-    stock: 18,
-  },
-  {
-    id: "pirelli-pzero-pz4",
-    name: "P Zero (PZ4)",
-    brand: "Pirelli",
-    category: "tyres",
-    price: 280,
-    size: "255/35 ZR19",
-    image: "https://images.unsplash.com/photo-1542282088-fe8426682b8f?auto=format&fit=crop&w=700&q=80",
-    description: "Street-legal track tyre for dry performance.",
-    specs: {},
-    isNewArrival: true,
-    stock: 12,
-  },
-  {
-    id: "goodyear-ef1",
-    name: "Eagle F1 SuperSport",
-    brand: "Goodyear",
-    category: "tyres",
-    price: 310,
-    size: "255/35 R20",
-    image: "https://images.unsplash.com/photo-1601614945415-0d3ee77a2886?auto=format&fit=crop&w=700&q=80",
-    description: "Superior handling on dry roads.",
-    specs: {},
-    stock: 14,
-  },
-  {
-    id: "yokohama-an09",
-    name: "Advan Neova AD09",
-    brand: "Yokohama",
-    category: "tyres",
-    price: 340,
-    size: "265/35 R18",
-    image: "https://images.unsplash.com/photo-1533038676263-0d33bdfc54da?auto=format&fit=crop&w=700&q=80",
-    description: "Next-gen extreme performance summer tyre.",
-    specs: {},
-    stock: 8,
-  },
-];
+import { useProducts } from "@/lib/products";
 
 const VISIBLE = 4;
 
@@ -131,12 +55,24 @@ function ProductTile({ product }: { product: Product }) {
             src={product.image}
             alt={product.name}
             loading="lazy"
-            className="w-full h-full object-cover group-hover:scale-108 transition-transform duration-700"
+            className="w-full h-full object-cover transition-transform duration-700"
             style={{ transition: "transform 0.7s cubic-bezier(0.16,1,0.3,1)" }}
             onMouseEnter={(e) => ((e.currentTarget as HTMLImageElement).style.transform = "scale(1.08)")}
             onMouseLeave={(e) => ((e.currentTarget as HTMLImageElement).style.transform = "scale(1)")}
           />
           <div className="absolute inset-0 bg-gradient-to-t from-[#030303] via-transparent to-transparent opacity-70" />
+          {product.originalPrice && (
+            <span
+              className="absolute top-3 left-3 text-[10px] font-bold uppercase tracking-wider px-2 py-1 rounded-md z-10"
+              style={{
+                background: "linear-gradient(135deg,#7b1020,#c1121f)",
+                color: "#fff",
+                boxShadow: "0 0 10px rgba(193,18,31,0.5)",
+              }}
+            >
+              {Math.round((1 - product.price / product.originalPrice) * 100)}% OFF
+            </span>
+          )}
         </div>
       </Link>
 
@@ -153,9 +89,16 @@ function ProductTile({ product }: { product: Product }) {
         <p className="text-[0.75rem] text-gray-500 mb-4">{product.size}</p>
 
         <div className="flex items-center justify-between">
-          <span className="font-sans text-lg font-bold text-white">
-            ${product.price.toFixed(2)}
-          </span>
+          <div className="flex flex-col">
+            <span className="font-sans text-lg font-bold text-white">
+              ${product.price.toFixed(2)}
+            </span>
+            {product.originalPrice && (
+              <span className="text-xs text-gray-500 line-through leading-tight">
+                ${product.originalPrice.toFixed(2)}
+              </span>
+            )}
+          </div>
           <button
             onClick={() => {
               addToCart(product);
@@ -177,12 +120,14 @@ function ProductTile({ product }: { product: Product }) {
 }
 
 export function TopPicks() {
+  const { products, loading } = useProducts();
   const [idx, setIdx] = useState(0);
-  const maxIdx = featuredProducts.length - VISIBLE;
+
+  const maxIdx = Math.max(0, products.length - VISIBLE);
   const canPrev = idx > 0;
   const canNext = idx < maxIdx;
 
-  const visible = featuredProducts.slice(idx, idx + VISIBLE);
+  const visible = products.slice(idx, idx + VISIBLE);
 
   return (
     <section className="py-24 bg-[#08050a] relative overflow-hidden">
@@ -235,20 +180,26 @@ export function TopPicks() {
         </div>
 
         {/* Product grid */}
-        <AnimatePresence mode="wait">
-          <motion.div
-            key={idx}
-            initial={{ opacity: 0, x: 20 }}
-            animate={{ opacity: 1, x: 0 }}
-            exit={{ opacity: 0, x: -20 }}
-            transition={{ duration: 0.35, ease: "easeOut" }}
-            className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5"
-          >
-            {visible.map((p) => (
-              <ProductTile key={p.id} product={p} />
-            ))}
-          </motion.div>
-        </AnimatePresence>
+        {loading ? (
+          <div className="flex justify-center py-16">
+            <Loader2 className="w-8 h-8 animate-spin text-[#c1121f]" />
+          </div>
+        ) : (
+          <AnimatePresence mode="wait">
+            <motion.div
+              key={idx}
+              initial={{ opacity: 0, x: 20 }}
+              animate={{ opacity: 1, x: 0 }}
+              exit={{ opacity: 0, x: -20 }}
+              transition={{ duration: 0.35, ease: "easeOut" }}
+              className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5"
+            >
+              {visible.map((p) => (
+                <ProductTile key={p.id} product={p} />
+              ))}
+            </motion.div>
+          </AnimatePresence>
+        )}
 
         {/* Mobile "View All" */}
         <div className="mt-10 flex justify-center md:hidden">

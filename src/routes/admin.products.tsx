@@ -127,6 +127,19 @@ function ProductForm({ product, categories, onDone }: { product: any; categories
   const [uploading, setUploading] = useState(false);
   const [extraImages, setExtraImages] = useState<string[]>([]);
 
+  // Load existing extra images from product_images table when editing
+  useEffect(() => {
+    if (!product?.id) return;
+    supabase
+      .from("product_images")
+      .select("url, sort_order")
+      .eq("product_id", product.id)
+      .order("sort_order")
+      .then(({ data }) => {
+        if (data && data.length > 0) setExtraImages(data.map((r: any) => r.url as string));
+      });
+  }, [product?.id]);
+
   async function uploadFiles(files: FileList | null) {
     if (!files) return;
     setUploading(true);
@@ -164,8 +177,14 @@ function ProductForm({ product, categories, onDone }: { product: any; categories
         if (error) throw error;
         id = data.id;
       }
-      if (extraImages.length && id) {
-        await supabase.from("product_images").insert(extraImages.map((url, i) => ({ product_id: id, url, sort_order: i })));
+      // Replace all extra images: delete existing rows then re-insert current set
+      if (id) {
+        await supabase.from("product_images").delete().eq("product_id", id);
+        if (extraImages.length) {
+          await supabase.from("product_images").insert(
+            extraImages.map((url, i) => ({ product_id: id, url, sort_order: i }))
+          );
+        }
       }
       toast.success("Saved");
       onDone();

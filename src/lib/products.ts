@@ -7,9 +7,11 @@ export type Product = {
   name: string;
   brand: string;
   category: "tyres" | "rims" | string;
-  price: number;
+  price: number;          // selling price (discount_price if set, otherwise price)
+  originalPrice?: number; // original price — only present when a discount exists
   size: string;
   image: string;
+  images?: string[];      // all images: main + extras from product_images table
   description: string;
   specs: Record<string, string>;
   isBestSeller?: boolean;
@@ -30,12 +32,16 @@ export function mapProduct(row: any, categoryName?: string): Product {
       }
     }
   }
+  const basePrice     = Number(row.price ?? 0);
+  const discountPrice = row.discount_price != null ? Number(row.discount_price) : null;
+
   return {
     id: row.id,
     name: row.title,
     brand: row.brand || (row.tags?.[0] ?? "TyreLux"),
     category: categoryName || (row.tags?.includes("rims") ? "rims" : "tyres"),
-    price: Number(row.discount_price ?? row.price ?? 0),
+    price: discountPrice ?? basePrice,
+    originalPrice: discountPrice != null && discountPrice < basePrice ? basePrice : undefined,
     size: row.size || (row.tags?.[1] ?? ""),
     image: row.main_image_url || FALLBACK_IMAGE,
     description: row.description || row.short_description || "",
@@ -57,7 +63,11 @@ export async function fetchProducts(): Promise<Product[]> {
       .order("created_at", { ascending: false });
     if (error) throw error;
     const dbProducts = (data ?? []).map((r: any) => mapProduct(r, r.categories?.slug));
-    return dbProducts.length > 0 ? dbProducts : demoProducts;
+    if (dbProducts.length === 0) return demoProducts;
+    // Merge: real products first, demo products fill the rest (IDs never conflict — DB uses UUIDs)
+    const dbIds = new Set(dbProducts.map((p) => p.id));
+    const demoFill = demoProducts.filter((p) => !dbIds.has(p.id));
+    return [...dbProducts, ...demoFill];
   } catch (err) {
     console.error("Supabase fetch failed, falling back to demo products", err);
     return demoProducts;
@@ -69,13 +79,23 @@ export async function fetchProduct(id: string): Promise<Product | null> {
   if (demoProd) return demoProd;
 
   try {
-    const { data, error } = await supabase
-      .from("products")
-      .select("*, categories(name, slug)")
-      .eq("id", id)
-      .maybeSingle();
+    const [{ data, error }, { data: extraImgs }] = await Promise.all([
+      supabase
+        .from("products")
+        .select("*, categories(name, slug)")
+        .eq("id", id)
+        .maybeSingle(),
+      supabase
+        .from("product_images")
+        .select("url, sort_order")
+        .eq("product_id", id)
+        .order("sort_order"),
+    ]);
     if (error || !data) return null;
-    return mapProduct(data, (data as any).categories?.slug);
+    const product = mapProduct(data, (data as any).categories?.slug);
+    const extras = (extraImgs ?? []).map((r: any) => r.url as string).filter(Boolean);
+    const images = [product.image, ...extras.filter((u) => u !== product.image)];
+    return { ...product, images };
   } catch (err) {
     return null;
   }
