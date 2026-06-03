@@ -1,1 +1,7 @@
 project_id = "uxnyvgzhuauhomvuydtl"
+
+[functions.place-order]
+verify_jwt = false
+
+[functions.init-bucket]
+verify_jwt = false

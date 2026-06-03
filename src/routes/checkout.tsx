@@ -43,35 +43,26 @@ function Checkout() {
 
     setSubmitting(true);
     try {
-      const { data: order, error: oErr } = await supabase
-        .from("orders")
-        .insert({
-          customer_name: `${v.fn} ${v.ln}`,
-          customer_email: v.em,
-          first_name: v.fn,
-          last_name: v.ln,
-          city: v.ct,
-          postal_code: v.zp,
-          shipping_address: v.ad,
+      // Server-side order placement — prices and totals are recomputed from
+      // the products table to prevent client-side tampering.
+      const { data, error } = await supabase.functions.invoke("place-order", {
+        body: {
+          items: cart.map((c) => ({ product_id: c.product.id, quantity: c.qty })),
+          customer: {
+            first_name: v.fn,
+            last_name: v.ln,
+            email: v.em,
+            address: v.ad,
+            city: v.ct,
+            postal_code: v.zp,
+          },
           payment_method: "card",
-          total: subtotal,
-          status: "pending",
-        })
-        .select("id")
-        .single();
-      if (oErr || !order) throw oErr ?? new Error("Failed to create order");
+        },
+      });
+      if (error) throw new Error(error.message ?? "Failed to place order");
+      if (!data?.order_id) throw new Error((data as any)?.error ?? "Failed to place order");
 
-      const items = cart.map((c) => ({
-        order_id: order.id,
-        product_title: c.product.name,
-        product_image: c.product.image,
-        quantity: c.qty,
-        unit_price: c.product.price,
-      }));
-      const { error: iErr } = await supabase.from("order_items").insert(items);
-      if (iErr) throw iErr;
-
-      setOrderId(order.id);
+      setOrderId(data.order_id);
       setDone(true);
       clearCart();
       toast.success("Order placed!");
