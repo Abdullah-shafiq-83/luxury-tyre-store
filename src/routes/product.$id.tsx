@@ -3,21 +3,69 @@ import { motion, AnimatePresence } from "framer-motion";
 import { Heart, ShoppingCart, ArrowLeft, Check, Loader2, ChevronLeft, ChevronRight } from "lucide-react";
 import { Layout } from "@/components/Layout";
 import { ZoomImage } from "@/components/ZoomImage";
-import { useProduct } from "@/lib/products";
+import { fetchProduct, useProduct } from "@/lib/products";
 import { useShop } from "@/store/cart";
 import { Button } from "@/components/ui/button";
 import { useState } from "react";
 import { toast } from "sonner";
 
 export const Route = createFileRoute("/product/$id")({
-  head: () => ({
-    meta: [
-      { title: "Product — TyreLux" },
-      { name: "description", content: "Premium tyres and alloy rims at TyreLux." },
-    ],
-  }),
+  loader: async ({ params }) => ({ product: await fetchProduct(params.id) }),
+  head: ({ params, loaderData }) => {
+    const p = loaderData?.product;
+    const url = `https://luxury-tyre-store.lovable.app/product/${params.id}`;
+    if (!p) {
+      return {
+        meta: [
+          { title: "Product — TyreLux" },
+          { name: "description", content: "Premium tyres and alloy rims at TyreLux." },
+          { property: "og:url", content: url },
+        ],
+        links: [{ rel: "canonical", href: url }],
+      };
+    }
+    const title = `${p.name} — ${p.brand} | TyreLux`;
+    const desc = (p.description || `Shop the ${p.name} from ${p.brand} at TyreLux. Free fitting and 5-year warranty.`).slice(0, 155);
+    return {
+      meta: [
+        { title },
+        { name: "description", content: desc },
+        { property: "og:title", content: title },
+        { property: "og:description", content: desc },
+        { property: "og:type", content: "product" },
+        { property: "og:url", content: url },
+        { property: "og:image", content: p.image },
+        { property: "twitter:image", content: p.image },
+      ],
+      links: [{ rel: "canonical", href: url }],
+      scripts: [
+        {
+          type: "application/ld+json",
+          children: JSON.stringify({
+            "@context": "https://schema.org",
+            "@type": "Product",
+            name: p.name,
+            description: p.description || undefined,
+            image: p.image,
+            brand: { "@type": "Brand", name: p.brand },
+            offers: {
+              "@type": "Offer",
+              priceCurrency: "USD",
+              price: p.price,
+              availability:
+                (p.stock ?? 0) > 0
+                  ? "https://schema.org/InStock"
+                  : "https://schema.org/OutOfStock",
+              url,
+            },
+          }),
+        },
+      ],
+    };
+  },
   component: ProductPage,
 });
+
 
 function ProductPage() {
   const { id } = Route.useParams();
@@ -207,7 +255,7 @@ function ProductPage() {
 
             {Object.keys(product.specs).length > 0 && (
               <div className="bg-muted/40 rounded-xl p-5 mb-8">
-                <h3 className="font-serif font-bold mb-3">Specifications</h3>
+                <h2 className="font-serif font-bold mb-3">Specifications</h2>
                 <dl className="grid grid-cols-2 gap-3 text-sm">
                   {Object.entries(product.specs).map(([k, v]) => (
                     <div key={k}>
