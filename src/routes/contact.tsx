@@ -12,6 +12,32 @@ export const Route = createFileRoute("/contact")({
     meta: [
       { title: "Contact — TyreLux" },
       { name: "description", content: "Get in touch with the TyreLux team. We're here to help with fitment, sizing, and bespoke orders." },
+      { property: "og:title", content: "Contact TyreLux" },
+      { property: "og:description", content: "Get in touch with the TyreLux team for fitment, sizing, and bespoke orders." },
+      { property: "og:type", content: "website" },
+      { property: "og:url", content: "https://luxury-tyre-store.lovable.app/contact" },
+    ],
+    links: [{ rel: "canonical", href: "https://luxury-tyre-store.lovable.app/contact" }],
+    scripts: [
+      {
+        type: "application/ld+json",
+        children: JSON.stringify({
+          "@context": "https://schema.org",
+          "@type": "LocalBusiness",
+          name: "TyreLux",
+          image: "https://luxury-tyre-store.lovable.app/favicon.svg",
+          url: "https://luxury-tyre-store.lovable.app/contact",
+          telephone: "+1-555-012-3456",
+          email: "hello@tyrelux.com",
+          address: {
+            "@type": "PostalAddress",
+            streetAddress: "221 Sunset Blvd",
+            addressLocality: "Los Angeles",
+            addressRegion: "CA",
+            addressCountry: "US",
+          },
+        }),
+      },
     ],
   }),
   component: Contact,

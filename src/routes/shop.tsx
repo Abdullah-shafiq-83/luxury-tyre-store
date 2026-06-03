@@ -15,9 +15,14 @@ export const Route = createFileRoute("/shop")({
   }),
   head: () => ({
     meta: [
-      { title: "Shop Tyres & Rims — TyreLux" },
-      { name: "description", content: "Browse our full collection of performance tyres and luxury alloy rims." },
+      { title: "Shop Premium Tyres & Alloy Rims — TyreLux" },
+      { name: "description", content: "Browse the full TyreLux collection of performance tyres and luxury alloy rims from the world's leading brands. Free fitting and 5-year warranty." },
+      { property: "og:title", content: "Shop Premium Tyres & Alloy Rims — TyreLux" },
+      { property: "og:description", content: "Browse the full TyreLux collection of performance tyres and luxury alloy rims. Free fitting and 5-year warranty." },
+      { property: "og:type", content: "website" },
+      { property: "og:url", content: "https://luxury-tyre-store.lovable.app/shop" },
     ],
+    links: [{ rel: "canonical", href: "https://luxury-tyre-store.lovable.app/shop" }],
   }),
   component: Shop,
 });
@@ -55,7 +60,7 @@ function Shop() {
     <Layout>
       <div className="max-w-7xl mx-auto px-4 md:px-8 py-10 md:py-16">
         <div className="mb-8">
-          <h1 className="font-serif text-4xl md:text-5xl font-bold mb-2">Shop</h1>
+          <h1 className="font-serif text-4xl md:text-5xl font-bold mb-2">Shop Premium Tyres & Rims</h1>
           <p className="text-muted-foreground">Premium tyres & alloy rims, curated for you.</p>
         </div>
 

@@ -47,7 +47,7 @@ export function Header() {
           <button className="text-muted-foreground hover:text-white transition-colors" aria-label="User Account">
             <User className="w-5 h-5" />
           </button>
-          <Link to="/cart" className="relative text-muted-foreground hover:text-white transition-colors flex items-center gap-2">
+          <Link to="/cart" aria-label="Cart" className="relative text-muted-foreground hover:text-white transition-colors flex items-center gap-2">
             <ShoppingCart className="w-5 h-5" />
             {cartCount > 0 && (
               <span className="absolute -top-1 -right-1 bg-primary text-white text-[10px] w-4 h-4 rounded-full flex items-center justify-center font-bold">
