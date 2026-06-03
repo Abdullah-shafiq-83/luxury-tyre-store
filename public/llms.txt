@@ -1,0 +1,10 @@
+# TyreLux
+
+> TyreLux is a premium online retailer of performance tyres and bespoke alloy rims, with free fitting and a 5-year warranty.
+
+## Pages
+
+- [Home](/): Brand overview, featured tyres and rims, and customer reviews.
+- [Shop](/shop): Full catalogue of premium tyres and alloy rims, filterable by category, brand, and price.
+- [About](/about): The story behind TyreLux and the brands we partner with.
+- [Contact](/contact): Get in touch with the TyreLux team for fitment help and bespoke orders.

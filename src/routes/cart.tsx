@@ -5,7 +5,14 @@ import { useShop } from "@/store/cart";
 import { Button } from "@/components/ui/button";
 
 export const Route = createFileRoute("/cart")({
-  head: () => ({ meta: [{ title: "Cart — TyreLux" }] }),
+  head: () => ({
+    meta: [
+      { title: "Your Cart — TyreLux" },
+      { name: "description", content: "Review the tyres and alloy rims in your TyreLux cart before checkout." },
+      { name: "robots", content: "noindex" },
+    ],
+    links: [{ rel: "canonical", href: "https://luxury-tyre-store.lovable.app/cart" }],
+  }),
   component: CartPage,
 });
 
@@ -74,7 +81,7 @@ function CartPage() {
             </div>
 
             <div className="glass-card rounded-xl p-6 h-fit sticky top-20">
-              <h3 className="font-serif font-bold text-lg mb-4 text-glow">Order Summary</h3>
+              <h2 className="font-serif font-bold text-lg mb-4 text-glow">Order Summary</h2>
               <div className="space-y-2 text-sm mb-4">
                 <div className="flex justify-between">
                   <span className="text-muted-foreground">Subtotal</span>
